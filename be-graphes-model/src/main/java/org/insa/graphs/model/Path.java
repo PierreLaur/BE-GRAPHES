@@ -1,6 +1,8 @@
 package org.insa.graphs.model;
 
 import java.util.ArrayList;
+import java.util.Iterator ;
+import java.util.ListIterator ;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class Path {
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
+        
         // TODO:
         return new Path(graph, arcs);
     }
@@ -56,7 +59,19 @@ public class Path {
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        float min ;
+        Arc shortest ;
+        for (int i=0;i<nodes.size()-1;i++) {
+        	shortest=nodes.get(i).getSuccessors().get(0) ;
+        	min=shortest.getLength() ;
+        	for (Arc arc: nodes.get(i).getSuccessors()) {
+        		if (arc.getLength()<min) {
+        			min=arc.getLength() ;
+        			shortest=arc ;
+        		}
+        	}
+        	arcs.add(shortest) ;
+        }
         return new Path(graph, arcs);
     }
 
@@ -201,8 +216,18 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public boolean isValid() {
-        // TODO:
-        return false;
+        boolean valid = true ;
+        if (this.size() > 1) { // si conditions 1 et 2 non vérifiées
+        	for(int i=0;i<this.size()-2;i++) { // on vérifie la condition 3 partie 2
+        		if (this.getArcs().get(i).getDestination().equals(this.getArcs().get(i+1).getOrigin())) {
+        			continue ;
+        		}
+        		valid=false ;
+        		break ;
+        	}
+        	valid=valid && (this.getOrigin() == this.getArcs().get(0).getOrigin()) ; // condition 3 partie 1
+        }
+        return valid ;
     }
 
     /**
@@ -213,8 +238,11 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public float getLength() {
-        // TODO:
-        return 0;
+    	float sum = 0 ;
+    	for(Iterator<Arc> it=this.getArcs().iterator(); it.hasNext();) {
+    		sum += (float)it.next().getLength() ;
+    	}
+        return sum ;
     }
 
     /**
@@ -228,8 +256,7 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public double getTravelTime(double speed) {
-        // TODO:
-        return 0;
+        return (double)this.getLength()*3.6/speed ;
     }
 
     /**
@@ -241,8 +268,11 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public double getMinimumTravelTime() {
-        // TODO:
-        return 0;
+    	double sum = 0.0 ;
+    	for(Iterator<Arc> it=this.getArcs().iterator(); it.hasNext();) {
+    		sum += it.next().getMinimumTravelTime() ;
+    	}
+        return sum ;
     }
 
 }
