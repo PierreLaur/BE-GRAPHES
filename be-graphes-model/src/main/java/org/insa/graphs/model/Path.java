@@ -234,7 +234,8 @@ public class Path {
     public int size() {
         return isEmpty() ? 0 : 1 + this.arcs.size();
     }
-
+    
+    
     /**
      * Check if this path is valid.
      * 
