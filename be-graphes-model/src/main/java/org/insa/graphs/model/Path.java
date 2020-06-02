@@ -277,7 +277,6 @@ public class Path {
     	}
         return sum ;
     }
-
     /**
      * Compute the time required to travel this path if moving at the given speed.
      * 

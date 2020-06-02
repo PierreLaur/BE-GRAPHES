@@ -54,17 +54,6 @@ public class Label implements Comparable<Label>{
     
     @Override
     public int compareTo (Label l) {
-    	/*double x = l.getCost()-this.getCost() ;
-    	int result ;
-    	if (x > 0) {
-    		result=1 ;
-    	}
-    	else if (x==0) {
-    		result=0 ;
-    	}
-    	else {
-    		result=-1 ;
-    	}*/
     	 return Double.compare(this.getCost(),l.getCost()) ;
     }
 

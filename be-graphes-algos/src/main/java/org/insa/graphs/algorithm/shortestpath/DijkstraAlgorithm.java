@@ -37,20 +37,26 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         labels[origin.getId()]=new Label(origin.getId(),false,0.0,null) ;
         heap.insert(labels[origin.getId()]) ;
 
-        // itérations 
+        // itérations
         int x ;
         while (!heap.isEmpty() && !labels[data.getDestination().getId()].getMark()) {
         	
         	x = heap.deleteMin().getCurrentNode() ;
         	labels[x].setMark(true) ;
+
         	notifyNodeMarked(graph.get(x));
+        	System.out.println(" nbsucc : " + graph.get(x).getNumberOfSuccessors());
+        	int i = 0 ;
         	for (Arc arc : graph.get(x).getSuccessors()) {
+        		i++ ;
+        		System.out.println("succ explorés : " + i);
         		int currentid=arc.getDestination().getId() ;
         		if (!data.isAllowed(arc) || labels[currentid].getMark()) {
                     continue;
                 }
         		if (labels[currentid].getCost()==Double.POSITIVE_INFINITY) {
         			labels[currentid].setCost(labels[x].getCost()+data.getCost(arc)) ;
+                	
         			labels[currentid].setFather(arc) ;
         			heap.insert(labels[currentid]) ;
         			notifyNodeReached(arc.getDestination());
@@ -70,7 +76,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		}
         	}
         }
-        
         if (labels[data.getDestination().getId()].getFather()==null) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         	} else {
@@ -82,10 +87,16 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	            arcs.add(arc);
 	            arc = labels[arc.getOrigin().getId()].getFather();
 	        }
-	        // Reverse the path...
+	        				// Renverser le chemin
 	        Collections.reverse(arcs);
+	        System.out.println("PCC "+ arcs.size() + "arcs");
+	        Path sol = new Path(graph, arcs) ;
+	        if (sol.isValid()) {
+	        	solution = new ShortestPathSolution(data, Status.OPTIMAL, sol);
+	        	} else {
+	        	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+	        }
 	        
-	        solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
         }
         
         return solution;      
